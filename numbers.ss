@@ -24,6 +24,11 @@
                       (list 0 0+i 0-i 0.0+0.0i 0.0-0.0i)))
 
 (define nums (append (list +nan.0 "0" #f)
+                     (list
+                       '(let ([x (black-box 0.0)]) (if (flonum? x) x (error)))
+                       '(let ([x (black-box -0.0)]) (if (flonum? x) x (error)))
+                       '(let ([x (black-box 0)]) (if (fixnum? x) x (error)))
+                       )
                      (map - pnums)
                      pnums))
 
@@ -46,9 +51,12 @@
                           ((eval (parameterize ([run-cp0 (lambda (cp0 x) (cp0 (#3%$cptypes x)))])
                                    (expand/optimize `(lambda () (,f ,x ,y)))) (interaction-environment))))])
                 (unless (equal? a b)
-                  (display (list f x y a b (equal? a b)))
+                  (display (list f x y '-> a b (equal? a b)))
                   (newline))
                 (loopy (cdr ly)))))))))
+
+(test/nn 'min)
+(test/nn 'max)
 
 (test/nn '+)
 (test/nn '-)
